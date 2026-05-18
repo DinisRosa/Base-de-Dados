@@ -1,0 +1,135 @@
+\chapter{ Documentação de atributos}
+
+Na tabela apresentada abaixo, é possível observar uma caracterização detalhada de cada atributo pertencente às diferentes entidades do modelo.
+
+Destaca-se a coluna “Tipos de dados e tamanho”, que indica o tipo de dado associado a cada atributo, como número inteiro (INT), data (DATE) ou texto (VARCHAR), bem como o respetivo tamanho quando aplicável.
+
+Para além disso, assumem especial importância as colunas de chave primária e chave estrangeira. A chave primária corresponde ao atributo (ou conjunto de atributos) que identifica de forma única cada registo numa tabela (por exemplo, \textit{id\_equipamento} na entidade EQUIPAMENTO ou \textit{id\_manutenção} na entidade MANUTENÇÃO).
+
+Por outro lado, as chaves estrangeiras são responsáveis por estabelecer ligações entre tabelas distintas, referenciando chaves primárias de outras entidades (por exemplo, uma manutenção está associada a um equipamento através de uma chave estrangeira).
+
+Estas chaves são fundamentais na organização de uma base de dados relacional, garantindo a integridade dos dados e facilitando a sua consulta e manipulação.
+
+\renewcommand{\arraystretch}{1.0}
+\rowcolors{2}{gray!10}{white}
+
+{\tiny
+\begin{longtable}{p{2.5cm} p{3cm} p{5cm} p{2cm} c}
+\toprule
+\textbf{Entidade} & \textbf{Atributo} & \textbf{Descrição} & \textbf{Tipo} & \textbf{Nulo} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Entidade} & \textbf{Atributo} & \textbf{Descrição} & \textbf{Tipo} & \textbf{Nulo} \\
+\midrule
+\endhead
+
+\multicolumn{5}{l}{\textbf{Localização}} \\
+\midrule
+ & id_localizacao & Identificador da localização & INT & Não \\
+ & descricao & Descrição da localização & VARCHAR(100) & Não \\
+ & sala & Sala & VARCHAR(3) & Não \\
+ & piso & Piso & VARCHAR(2) & Não \\
+ & edificio & Edifício & VARCHAR(2) & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Equipamento}} \\
+\midrule
+ & id_equipamento & Identificador do equipamento & INT & Não \\
+ & descricao & Descrição do equipamento & VARCHAR(100) & Não \\
+ & estado & Estado do equipamento & VARCHAR(50) & Não \\
+ & fabricante & Fabricante & VARCHAR(100) & Não \\
+ & designacao & Designação & VARCHAR(100) & Não \\
+ & data_aquisicao & Data de aquisição & DATE & Não \\
+ & idade_equipamento & Idade do equipamento & INT & Não \\
+ & contacto_suporte & Contacto de suporte & VARCHAR(20) & Sim \\
+ & id_localizacao & Localização associada & INT & Não \\
+ & id_departamento & Departamento associado & INT & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Manutenção}} \\
+\midrule
+ & id_manutencao & Identificador da manutenção & INT & Não \\
+ & tipo & Tipo de manutenção & VARCHAR(50) & Não \\
+ & duracao & Duração & INT & Não \\
+ & data_inicio & Data de início & DATE & Não \\
+ & data_fim & Data de fim & DATE & Não \\
+ & custo & Custo & DECIMAL & Não \\
+ & descricao & Descrição & VARCHAR(200) & Não \\
+ & id_equipamento & Equipamento associado & INT & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Histórico_intervenção}} \\
+\midrule
+ & id_historico & Identificador do histórico & INT & Não \\
+ & descricao & Descrição & VARCHAR(200) & Não \\
+ & resultado & Resultado & VARCHAR(100) & Não \\
+ & data & Data & DATE & Não \\
+ & id_manutencao & Manutenção associada & INT & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Peça}} \\
+\midrule
+ & id_peca & Identificador da peça & INT & Não \\
+ & designacao & Designação & VARCHAR(100) & Não \\
+ & preco & Preço & DECIMAL & Não \\
+ & validade_peca & Validade & DATE & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Fornecedor_peças}} \\
+\midrule
+ & id_fornecedor & Identificador do fornecedor & INT & Não \\
+ & empresa & Nome da empresa & VARCHAR(100) & Não \\
+ & contacto & Contacto & VARCHAR(10) & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Técnico}} \\
+\midrule
+ & id_tecnico & Identificador do técnico & INT & Não \\
+ & nome & Nome & VARCHAR(100) & Não \\
+ & especialidade & Especialidade & VARCHAR(100) & Não \\
+ & contacto & Contacto & VARCHAR(10) & Não \\
+ & anos_experiencia & Anos de experiência & INT & Não \\
+ & data_inicio_carreira & Data início carreira & DATE & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Intervenção_técnico}} \\
+\midrule
+ & id_intervencao & Identificador da intervenção & INT & Não \\
+ & cargo & Cargo na intervenção & VARCHAR(50) & Não \\
+ & horas_trabalho & Horas de trabalho & INT & Não \\
+ & id_tecnico & Técnico associado & INT & Não \\
+ & id_manutencao & Manutenção associada & INT & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Ordem_serviço}} \\
+\midrule
+ & id_ordem & Identificador da ordem & INT & Não \\
+ & descricao & Descrição & VARCHAR(200) & Não \\
+ & estado_atual & Estado atual & VARCHAR(50) & Não \\
+ & data_criacao & Data de criação & DATE & Não \\
+ & prioridade & Prioridade & VARCHAR(20) & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Departamento}} \\
+\midrule
+ & id_departamento & Identificador do departamento & INT & Não \\
+ & designacao & Designação & VARCHAR(100) & Não \\
+ & descricao & Descrição & VARCHAR(200) & Não \\
+
+\midrule
+\multicolumn{5}{l}{\textbf{Responsável}} \\
+\midrule
+ & id_responsavel & Identificador do responsável & INT & Não \\
+ & nome & Nome & VARCHAR(100) & Não \\
+ & data_nascimento & Data nascimento & DATE & Não \\
+ & contacto & Contacto & VARCHAR(20) & Não \\
+ & id_departamento & Departamento associado & INT & Não \\
+
+\bottomrule
+\end{longtable}
+}
+
+
+

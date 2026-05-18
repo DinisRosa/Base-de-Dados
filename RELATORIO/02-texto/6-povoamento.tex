@@ -1,0 +1,233 @@
+\chapter{ Povoamento}
+
+\section{Povoamento da entidade “Localização”}
+{\small
+\begin{lstlisting}{SQL}
+INSERT INTO Localização (id_ocalização, descrição, sala, piso, edifício) VALUES
+(1, 'Sala de Servidores Principal', '101', '1', '1'),
+(2, 'Laboratório de Informática', '202', '2', '2'),
+(3, 'Armazém de Equipamentos', '001', '0', '3'),
+(4, 'Sala de Reuniões Norte', '301', '3', '1'),
+(5, 'Centro de Controlo', '100', '1', '4'),
+(6, 'Oficina de Manutenção', '050', '0', '2'),
+(7, 'Sala de Comunicações', '205', '2', '1'),
+(8, 'Depósito Técnico', '010', '0', '3'),
+(9, 'Sala de Monitorização', '401', '4', '4'),
+(10, 'Receção Principal', '001', '0', '1');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Equipamento”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Equipamento (idEquipamento, estado, descrição, fabricante, designação, data_aquisição, idade_equipamento, contacto_suporte) VALUES
+(1, 'Operacional', 'Ventilador Pulmonar Avançado', 'Draeger', 'Evita V500', '2023-05-15', 2, '912345678'),
+(2, 'Operacional', 'Ecógrafo Portátil 4D', 'GE Healthcare', 'Vivid iq', '2022-11-20', 3, '922334455'),
+(3, 'Em Manutenção', 'Monitor de Sinais Vitais', 'Philips', 'IntelliVue MX450', '2024-01-10', 2, '933445566'),
+(4, 'Operacional', 'Desfibrilhador Automático', 'Zoll', 'R Series', '2023-08-05', 2, '966778899'),
+(5, 'Avariado', 'Bomba de Infusão Contínua', 'B. Braun', 'Infusomat P', '2021-03-30', 5, '911223344'),
+(6, 'Operacional', 'Eletrocardiógrafo 12 Canais', 'Mortara', 'ELI 250', '2022-06-12', 3, '922887766'),
+(7, 'Operacional', 'Aspirador de Secreções Hospitalar', 'Medela', 'Dominant Flex', '2023-12-01', 2, '933554433'),
+(8, 'Em Manutenção', 'Oximetro de Pulso de Mesa', 'Masimo', 'Rad-97', '2024-02-15', 2, '911001122'),
+(9, 'Operacional', 'Termómetro de Infravermelhos Pro', 'Welch Allyn', 'CareTemp', '2024-03-01', 2, '966009988'),
+(10, 'Operacional', 'Esfigmomanómetro Digital', 'Omron', 'HBP-1320', '2023-09-20', 2, '911998877');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Departamento”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Departamento (id_departamento, designação, descrição, id_responsável) VALUES
+(1, 'Cardiologia', 'Unidade de cuidados e diagnósticos cardíacos', 1),
+(2, 'Imagiologia', 'Serviço de exames radiológicos e ecografias', 4),
+(3, 'Urgências', 'Atendimento permanente de cuidados agudos', 2),
+(4, 'Manutenção Técnica', 'Gestão de infraestruturas e biomédica', 3),
+(5, 'Cuidados Intensivos', 'Unidade de monitorização crítica (UCI)', 5);
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Departamento Equipamento”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Departamento_equipamento (idDepartamento, id_equipamento) VALUES
+(5, 1), 
+(2, 2), 
+(1, 3),  
+(3, 4),  
+(4, 8);
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Responsável”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Responsável (id_responsável, nome, data_nascimento, contacto) VALUES
+(1, 'Dra. Ana Martins', '1975-03-12', '912345678'),
+(2, 'Dr. Carlos Santos', '1982-07-25', '922334455'),
+(3, 'Dr. Ricardo Pereira', '1980-11-05', '933445566'),
+(4, 'Dra. Sofia Oliveira', '1988-01-30', '966778899'),
+(5, 'Dr. Miguel Ferreira', '1970-05-18', '911223344');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Ordem de Serviço”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Ordem de serviço (id_ordem, descrição, estado_atual, data_criação, prioridade) VALUES
+(1, 'Verificação anual do ventilador pulmonar', 'Concluída', '2025-01-10', 'Alta'),
+(2, 'Calibração do ecógrafo portátil', 'Concluída', '2025-02-05', 'Média'),
+(3, 'Reparação do monitor de sinais vitais', 'Em Curso', '2025-03-01', 'Alta'),
+(4, 'Substituição de bateria do desfibrilhador', 'Concluída', '2025-01-20', 'Alta'),
+(5, 'Manutenção preventiva da bomba de infusão', 'Pendente', '2025-03-15', 'Média'),
+(6, 'Revisão do eletrocardiógrafo', 'Concluída', '2025-02-18', 'Baixa'),
+(7, 'Limpeza e teste do aspirador de secreções', 'Concluída', '2025-01-28', 'Baixa'),
+(8, 'Diagnóstico do oxímetro de pulso', 'Em Curso', '2025-03-10', 'Alta'),
+(9, 'Verificação do termómetro de infravermelhos', 'Concluída', '2025-02-25', 'Baixa'),
+(10, 'Calibração do esfigmomanómetro digital', 'Pendente', '2025-03-20', 'Média');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Manutenção”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Manutenção (id_manutenção, custo, tipo, duração, descrição, data_inicio, data_fim) VALUES
+(1, 350.00, 'Preventiva', 4, 'Manutenção preventiva anual do ventilador', '2025-01-12', '2025-01-12'),
+(2, 220.00, 'Calibração', 3, 'Calibração e ajuste do ecógrafo portátil', '2025-02-07', '2025-02-07'),
+(3, 480.00, 'Corretiva', 8, 'Substituição de ecrã do monitor de sinais vitais', '2025-03-03', NULL),
+(4, 150.00, 'Corretiva', 2, 'Substituição de bateria interna do desfibrilhador', '2025-01-22', '2025-01-22'),
+(5, 310.00, 'Preventiva', 5, 'Revisão geral da bomba de infusão contínua', '2025-03-17', NULL),
+(6, 180.00, 'Preventiva', 3, 'Revisão e limpeza do eletrocardiógrafo', '2025-02-20', '2025-02-20'),
+(7, 90.00, 'Preventiva', 2, 'Limpeza e teste funcional do aspirador', '2025-01-29', '2025-01-29'),
+(8, 260.00, 'Corretiva', 6, 'Diagnóstico e reparação do oxímetro de pulso', '2025-03-11', NULL),
+(9, 70.00, 'Calibração', 1, 'Verificação de precisão do termómetro', '2025-02-26', '2025-02-26'),
+(10, 120.00, 'Calibração', 2, 'Calibração do esfigmomanómetro digital', '2025-03-22', NULL);
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Manutenção Ordem”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Manutenção_ordem (idOrdem, id_manutenção) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Histórico de Intervenção”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO `Hitórico de Manutenção` (id_hitórico, resultado, descrição, data) VALUES
+(1, 'Sucesso', 'Ventilador verificado e calibrado sem anomalias', '2025-01-12'),
+(2, 'Sucesso', 'Ecógrafo calibrado, imagem dentro dos parâmetros', '2025-02-07'),
+(3, 'Em Curso', 'Aguarda peça de substituição para o ecrã', '2025-03-03'),
+(4, 'Sucesso', 'Bateria substituída, desfibrilhador operacional', '2025-01-22'),
+(5, 'Em Curso', 'Revisão iniciada, bomba aguarda diagnóstico completo', '2025-03-17'),
+(6, 'Sucesso', 'Eletrocardiógrafo revisto, traçado estável', '2025-02-20'),
+(7, 'Sucesso', 'Aspirador limpo e testado, funcionamento normal', '2025-01-29'),
+(8, 'Em Curso', 'Oxímetro em diagnóstico, sensor principal suspeito', '2025-03-11'),
+(9, 'Sucesso', 'Termómetro verificado, desvio dentro da margem', '2025-02-26'),
+(10, 'Pendente', 'Calibração agendada, equipamento operacional', '2025-03-22');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Peça”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Peça (id_peça, preço, designação, validade_peça) VALUES
+(1, 85.00, 'Filtro de ar HEPA ventilador', '2027-12-31'),
+(2, 210.00, 'Sonda ecográfica convexa', '2028-06-30'),
+(3, 320.00, 'Ecrã tátil monitor sinais vitais', '2029-01-01'),
+(4, 95.00, 'Bateria Li-ion desfibrilhador', '2026-12-31'),
+(5, 140.00, 'Rotor bomba de infusão', '2027-06-30'),
+(6, 60.00, 'Cabo de eléctrodos ECG', '2028-01-01'),
+(7, 45.00, 'Filtro aspirador secreções', '2027-03-31'),
+(8, 175.00, 'Sensor SpO2 oxímetro de pulso', '2028-09-30'),
+(9, 30.00, 'Pilhas alcalinas termómetro', '2026-06-30'),
+(10, 55.00, 'Manguito esfigmomanómetro adulto', '2027-12-31');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Fornece”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Fornece (id_fornecedor, id_peça, data_compra) VALUES
+(1, 1, '2025-01-10'),  
+(2, 2, '2025-02-05'),  
+(3, 3, '2025-03-01'),  
+(1, 4, '2025-01-20'), 
+(4, 5, '2025-03-15'),  
+(2, 6, '2025-02-18'),  
+(5, 7, '2025-01-28'),  
+(3, 8, '2025-03-10'), 
+(5, 9, '2025-02-25'),  
+(4, 10, '2025-03-20'); 
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Fornecedor Peças”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO `Fornecedor Peças` (id_fornecedor, contacto, empresa) VALUES
+(1, '210100200', 'MedTech Ibérica, Lda.'),
+(2, '220200300', 'BioSupply Portugal, S.A.'),
+(3, '230300400', 'HospitalTech, Lda.'),
+(4, '240400500', 'ProMed Equipamentos, S.A.'),
+(5, '250500600', 'ClinicalParts Europa, Lda.');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Manutenção Peça”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Manutenção_Peça (id_manutenção, id_peça) VALUES
+(1, 1), 
+(2, 2),  
+(3, 3),  
+(4, 4), 
+(5, 5), 
+(6, 6), 
+(7, 7),  
+(8, 8), 
+(9, 9),  
+(10, 10);
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Técnico”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Técnico (id_técnico, contacto, anos_experiencia, data_inicio_carreira, nome, especialidade) VALUES
+(1, '911222333', 9, '2015-01-15', 'Ricardo Pereira', 'Eletrónica Médica'),
+(2, '922333444', 14, '2010-03-20', 'Marta Silveira', 'Imagiologia/Ressonância'),
+(3, '933444555', 4, '2020-09-01', 'João Gouveia', 'Sistemas de Ventilação'),
+(4, '966555666', 19, '2005-05-10', 'António Costa', 'Instrumentação Cirúrgica'),
+(5, '911888999', 6, '2018-02-01', 'Beatriz Lopes', 'Monitorização Paramétrica');
+\end{lstlisting}
+}
+
+\section{Povoamento da entidade “Intervenção Técnico”}
+{\small
+\begin{lstlisting}[breaklines]{SQL}
+INSERT INTO Intervenção Técnico
+(id_intervenção, cargo, horas_trabalho) VALUES
+(1, 'Técnico Responsável', 4),
+(2, 'Técnico Responsável', 3),
+(3, 'Técnico Sénior', 8),
+(4, 'Técnico Responsável', 2),
+(5, 'Técnico Sénior', 5),
+(6, 'Técnico Responsável', 3),
+(7, 'Técnico Assistente', 2),
+(8, 'Técnico Sénior', 6),
+(9, 'Técnico Assistente', 1),
+(10, 'Técnico Responsável', 2);
+
+\end{lstlisting}
+}

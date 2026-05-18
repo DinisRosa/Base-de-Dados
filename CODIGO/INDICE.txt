@@ -1,0 +1,315 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║                     📑 ÍNDICE E GUIA DE NAVEGAÇÃO                             ║
+║                  Sistema de Gestão de Equipamentos Médicos                    ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+🗂️  ESTRUTURA DE PASTAS
+════════════════════════════════════════════════════════════════════════════════
+
+CODIGO/
+├── README.md ........................... 👈 COMECE AQUI! Guia completo
+├── INDICE.txt .......................... Este ficheiro (navegação)
+│
+├── modelo_conceptual/
+│   └── mod_conceptual_novas_modificacoes.xml (Modelo ER - Fonte de Verdade)
+│
+├── sql/ (Scripts SQL organizados)
+│   ├── 01_schema/ ...................... CRIAR: Tabelas e constraints
+│   ├── 02_populacao/ ................... POPULAR: Dados de teste
+│   ├── 03_operacoes/ ................... USAR: CRUD, Procedures, etc.
+│   └── 04_testes/ ...................... VALIDAR: Testes e verificações
+│
+├── docs/ (Documentação)
+│   ├── requisitos/ ..................... ESPECIFICAÇÃO: O quê foi pedido
+│   ├── guias/ .......................... HOWTO: Guias práticos
+│   ├── historico/ ...................... CHANGELOG: O quê foi alterado
+│   └── indice/ ......................... REFERÊNCIA: Índices e checklists
+│
+└── trabalho prático bd.pdf ............. Enunciado original
+
+
+🚀 QUICK START (5 minutos)
+════════════════════════════════════════════════════════════════════════════════
+
+1. Ler Overview:
+   → README.md (secção "Começar Rapidamente")
+   → docs/indice/QUICKSTART.txt
+
+2. Criar Base de Dados:
+   mysql -u usuario -p < sql/01_schema/01_tabelas.sql
+
+3. Popular Dados:
+   mysql -u usuario -p < sql/02_populacao/03_povoamento.sql
+
+4. Validar:
+   mysql -u usuario -p < sql/04_testes/08_teste_funcional.sql
+
+
+📍 PROCURO ... (Onde encontrar)
+════════════════════════════════════════════════════════════════════════════════
+
+Preciso de:                          Ir para:
+
+ENTENDER O PROJETO
+├─ Overview em 30 seg            → docs/indice/QUICKSTART.txt
+├─ O que foi pedido              → docs/requisitos/REQUISITOS.md
+├─ Resumo de testes              → docs/indice/SUMARIO_TESTES.txt
+├─ Todas as mudanças             → docs/historico/MUDANCAS.md
+└─ Detalhes de 1:N               → docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md
+
+USAR A BASE DE DADOS
+├─ Criar tabelas                 → sql/01_schema/01_tabelas.sql
+├─ Popular dados                 → sql/02_populacao/03_povoamento.sql
+├─ CRUD básico                   → sql/03_operacoes/02_crud.sql
+├─ Procedures                    → sql/03_operacoes/04_procedures.sql
+├─ Functions                     → sql/03_operacoes/05_functions.sql
+├─ Views e relatórios            → sql/03_operacoes/07_views.sql
+└─ Triggers                      → sql/03_operacoes/06_triggers.sql
+
+TESTAR A BASE DE DADOS
+├─ Suite completa (14 seções)    → sql/04_testes/08_teste_funcional.sql
+├─ Dashboards rápidos            → sql/04_testes/verificacoes_rapidas.sql
+├─ Testes adicionais             → sql/04_testes/teste.sql
+└─ Script bash automatizado      → sql/04_testes/teste_bd.sh
+
+REFERÊNCIA RÁPIDA
+├─ Cheat sheet                   → docs/requisitos/QUICK_REFERENCE.txt
+├─ Campos e tipos                → docs/indice/INDEX_FICHEIROS.txt
+├─ Manifesto completo            → docs/indice/MANIFEST.txt
+├─ Modelo conceptual             → modelo_conceptual/mod_conceptual_novas_modificacoes.xml
+└─ Checklist                     → docs/requisitos/CHECKLIST_IMPLEMENTACAO.txt
+
+INFORMAÇÃO SOBRE FICHEIROS
+├─ O que cada ficheiro faz       → docs/indice/INDEX_FICHEIROS.txt
+├─ Tamanho e linhas              → docs/indice/MANIFEST.txt
+└─ Estrutura detalhada           → README.md (secção "Ficheiros SQL")
+
+
+📚 DOCUMENTAÇÃO POR TIPO
+════════════════════════════════════════════════════════════════════════════════
+
+REQUISITOS (Especificação)
+├─ docs/requisitos/REQUISITOS.md
+│  └─ 10 Requisitos Funcionais
+│  └─ 8 Requisitos Não-Funcionais
+│  └─ 14 Entidades descritas
+│  └─ Constraints e validações
+│  └─ Operações CRUD
+│  └─ Views e relatórios
+│
+├─ docs/requisitos/QUICK_REFERENCE.txt
+│  └─ Cheat sheet de 500+ linhas
+│  └─ Estados, prioridades, tipos
+│  └─ Lookup rápido de campos
+│  └─ Tabelas de relacionamento
+│
+└─ docs/requisitos/CHECKLIST_IMPLEMENTACAO.txt
+   └─ Verificação item-by-item
+   └─ Rastreamento de implementação
+
+
+HISTÓRICO (Mudanças)
+├─ docs/historico/MUDANCAS.md
+│  └─ Histórico geral do projecto
+│  └─ Versões anteriores
+│  └─ Decisões de design
+│
+└─ docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md
+   └─ Detalhe técnico da mudança N:M → 1:N
+   └─ Antes/Depois comparação
+   └─ Justificação
+   └─ Ficheiros alterados
+
+
+GUIAS (How-To)
+├─ docs/guias/README_ATUALIZACOES.txt
+│  └─ Changelog de atualizações
+│
+└─ docs/guias/ (próximas versões)
+   └─ Procedimentos passo-a-passo
+
+
+ÍNDICE (Referência)
+├─ docs/indice/QUICKSTART.txt
+│  └─ 30-segundo quick start
+│
+├─ docs/indice/SUMARIO_TESTES.txt
+│  └─ Resumo de 13 seções de testes
+│  └─ Validações executadas
+│
+├─ docs/indice/INDEX_FICHEIROS.txt
+│  └─ Listagem detalhada de todos os ficheiros
+│  └─ Tamanho, linhas, conteúdo
+│
+└─ docs/indice/MANIFEST.txt
+   └─ Manifesto completo do projecto
+   └─ Descrição de cada ficheiro
+   └─ Dependências
+   └─ Checksum/versioning
+
+
+🗄️  SQL ORGANIZADO POR FASE
+════════════════════════════════════════════════════════════════════════════════
+
+FASE 1: CRIAR (SQL/01_SCHEMA)
+├─ 01_tabelas.sql
+│  └─ 13 tabelas de domínio + relacionamentos
+│  └─ 1 tabela de auditoria
+│  └─ 15+ Foreign Keys
+│  └─ 13+ CHECK constraints
+│  └─ Índices para performance
+└─ Executar PRIMEIRO
+
+
+FASE 2: POPULAR (SQL/02_POPULACAO)
+├─ 03_povoamento.sql
+│  └─ 3 Localizações
+│  └─ 3 Departamentos
+│  └─ 3 Responsáveis
+│  └─ 3 Equipamentos
+│  └─ 3 Técnicos
+│  └─ 3 Manutenções
+│  └─ 3 Peças
+│  └─ 3 Ordens de Serviço
+│  └─ 3 Intervenções Técnicas
+│
+├─ dados_exemplo/ (espaço para expansão)
+│  └─ Para dados maiores no futuro
+│
+└─ Executar SEGUNDO
+
+
+FASE 3: USAR (SQL/03_OPERACOES)
+├─ 02_crud.sql
+│  └─ Operações CREATE, READ, UPDATE, DELETE
+│
+├─ 04_procedures.sql
+│  └─ Procedimentos armazenados
+│
+├─ 05_functions.sql
+│  └─ Funções SQL (cálculos, conversões)
+│
+├─ 06_triggers.sql
+│  └─ Triggers para auditoria automática
+│
+└─ 07_views.sql
+   └─ 8+ Views
+   └─ Relatórios
+   └─ Dashboards
+
+
+FASE 4: VALIDAR (SQL/04_TESTES)
+├─ 08_teste_funcional.sql
+│  └─ Suite completa (14 seções)
+│  ├─ 1. Verificação de estrutura
+│  ├─ 2. Integridade referencial
+│  ├─ 3. Atributos multivalorados
+│  ├─ 4. População de dados
+│  ├─ 5. Constraints
+│  ├─ 6. Relacionamentos 1:N
+│  ├─ 7. Query complexa
+│  ├─ 8. Query manutenções
+│  ├─ 9. Relação 1:N (NOVO v2.0)
+│  ├─ 10. Estatísticas
+│  ├─ 11. Views
+│  ├─ 12. Triggers
+│  ├─ 13. Procedures
+│  └─ 14. Resumo Final
+│
+├─ verificacoes_rapidas.sql
+│  └─ 10 dashboards de monitoramento
+│  └─ Queries de negócio
+│  └─ BI básico
+│
+├─ teste.sql
+│  └─ Testes adicionais
+│
+└─ teste_bd.sh
+   └─ Script bash para automação
+   └─ Suporta variáveis de ambiente
+
+
+✅ CONFORMIDADE COM MODELO
+════════════════════════════════════════════════════════════════════════════════
+
+Relação MANUTENCAO-ORDEM: ✅ 1:N (Versão 2.0)
+├─ Implementação: FK em MANUTENCAO
+├─ NOT NULL: Obrigatório
+├─ Teste: Secção 9 em 08_teste_funcional.sql
+├─ Documentação: MUDANCAS_1N_MANUTENCAO_ORDEM.md
+└─ Conformidade: 100%
+
+
+📊 ESTRUTURA DE DADOS - RESUMO
+════════════════════════════════════════════════════════════════════════════════
+
+Tabelas: 14 (13 operacionais + 1 auditoria)
+
+Domínio (8):        LOCALIZACAO, DEPARTAMENTO, RESPONSAVEL, EQUIPAMENTO,
+                    TECNICO, MANUTENCAO, PECA, ORDEM_SERVICO
+
+Multivaloradas (3): RESPONSAVEL_CONTACTO, EQUIPAMENTO_CONTACTO_SUPORTE,
+                    TECNICO_CONTACTO
+
+N:M (2):            MANUTENCAO_PECA, INTERVENCAO_TECNICO
+
+1:N (5):            RESPONSAVEL→DEPARTAMENTO, EQUIPAMENTO→DEPARTAMENTO,
+                    EQUIPAMENTO→LOCALIZACAO, MANUTENCAO→EQUIPAMENTO,
+                    MANUTENCAO→ORDEM_SERVICO ✅
+
+Auditoria (1):      AUDITORIA_EQUIPAMENTO
+
+
+🎯 PRÓXIMOS PASSOS
+════════════════════════════════════════════════════════════════════════════════
+
+Se é PRIMEIRO USO:
+1. Ler README.md (overview)
+2. Ler docs/indice/QUICKSTART.txt (5 min)
+3. Executar sql/01_schema/01_tabelas.sql
+4. Executar sql/02_populacao/03_povoamento.sql
+5. Executar sql/04_testes/08_teste_funcional.sql
+
+Se quer EXPANDIR:
+1. Adicionar dados: sql/02_populacao/dados_exemplo/
+2. Adicionar procedures: sql/03_operacoes/
+3. Adicionar testes: sql/04_testes/
+
+Se quer ENTENDER:
+1. Ler docs/requisitos/REQUISITOS.md
+2. Ler docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md
+3. Usar docs/requisitos/QUICK_REFERENCE.txt como referência
+
+
+🔍 FERRAMENTA DE BUSCA RÁPIDA
+════════════════════════════════════════════════════════════════════════════════
+
+Procuro por:                        Ficheiro:
+
+Tabela MANUTENCAO                   → sql/01_schema/01_tabelas.sql
+Relacionamento 1:N                  → docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md
+Query de equipamentos               → sql/04_testes/verificacoes_rapidas.sql
+Teste de constraints                → sql/04_testes/08_teste_funcional.sql (Secção 5)
+Procedimentos armazenados           → sql/03_operacoes/04_procedures.sql
+View de manutenções                 → sql/03_operacoes/07_views.sql
+Dados de teste                      → sql/02_populacao/03_povoamento.sql
+Modelo ER                           → modelo_conceptual/mod_conceptual_novas_modificacoes.xml
+Cheat sheet                         → docs/requisitos/QUICK_REFERENCE.txt
+Requisistos                         → docs/requisitos/REQUISITOS.md
+
+
+════════════════════════════════════════════════════════════════════════════════
+                        ✅ Estrutura Pronta para Usar
+════════════════════════════════════════════════════════════════════════════════
+
+Data: 18 de Maio de 2026
+Versão: 2.0
+Status: COMPLETO E ORGANIZADO
+
+Comece por: README.md → Quick Start → Criar BD
+
+════════════════════════════════════════════════════════════════════════════════
+

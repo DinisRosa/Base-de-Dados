@@ -1,0 +1,233 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║               🏥 SISTEMA DE GESTÃO DE EQUIPAMENTOS MÉDICOS                    ║
+║                                                                                ║
+║                   ✅ ESTRUTURA REORGANIZADA E PRONTA                         ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+👋 BEM-VINDO!
+════════════════════════════════════════════════════════════════════════════════
+
+Esta pasta agora está completamente organizada e fácil de navegar.
+
+Veja abaixo as instruções para começar.
+
+
+🚀 PASSOS PARA COMEÇAR (5 MINUTOS)
+════════════════════════════════════════════════════════════════════════════════
+
+┌─ 1️⃣  LER OVERVIEW ─────────────────────────────────────┐
+│                                                          │
+│  cat README.md                                           │
+│  (Guia completo de tudo nesta pasta)                    │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+┌─ 2️⃣  CRIAR BASE DE DADOS ──────────────────────────────┐
+│                                                          │
+│  mysql -u usuario -p < sql/01_schema/01_tabelas.sql    │
+│                                                          │
+│  Isto vai:                                               │
+│  • Criar database gestao_equipamentos                   │
+│  • Criar 14 tabelas                                     │
+│  • Adicionar constraints e índices                      │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+┌─ 3️⃣  POPULAR COM DADOS ────────────────────────────────┐
+│                                                          │
+│  mysql -u usuario -p < sql/02_populacao/03_povoamento.sql
+│                                                          │
+│  Isto vai:                                               │
+│  • Inserir dados de exemplo                             │
+│  • Popular todas as tabelas                             │
+│  • Criar relacionamentos de teste                       │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+┌─ 4️⃣  VALIDAR TUDO ─────────────────────────────────────┐
+│                                                          │
+│  mysql -u usuario -p < sql/04_testes/08_teste_funcional.sql
+│                                                          │
+│  Isto vai:                                               │
+│  • Verificar estrutura                                  │
+│  • Validar integridade                                  │
+│  • Executar 14 seções de testes                         │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+✅ Pronto! Base de dados funcional!
+
+
+🗂️  NAVEGAÇÃO RÁPIDA POR OBJETIVO
+════════════════════════════════════════════════════════════════════════════════
+
+Se quer fazer:                      Vá para:
+─────────────────────────────────────────────────────────────
+
+Entender o projecto               → README.md (secção "Começar Rapidamente")
+                                    ou docs/indice/QUICKSTART.txt
+
+Criar base de dados               → sql/01_schema/01_tabelas.sql
+
+Popular com dados                 → sql/02_populacao/03_povoamento.sql
+
+Ver o modelo conceptual           → modelo_conceptual/mod_conceptual_novas_modificacoes.xml
+
+Ler requisitos                    → docs/requisitos/REQUISITOS.md
+
+Referência rápida (cheat sheet)   → docs/requisitos/QUICK_REFERENCE.txt
+
+Testar a BD                       → sql/04_testes/08_teste_funcional.sql
+
+Ver histórico de mudanças         → docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md
+
+Procurar ficheiros específicos    → INDICE.txt
+
+
+📋 ESTRUTURA (Para entender a organização)
+════════════════════════════════════════════════════════════════════════════════
+
+CODIGO/
+│
+├─ README.md ..................... 👈 COMECE AQUI!
+├─ INDICE.txt .................... Guia de navegação
+├─ INICIO.txt .................... Este ficheiro
+│
+├─ modelo_conceptual/
+│  └─ Modelo ER (fonte de verdade)
+│
+├─ sql/
+│  ├─ 01_schema/ ................ CRIAR tabelas
+│  ├─ 02_populacao/ ............. POPULAR dados
+│  ├─ 03_operacoes/ ............. USAR BD (CRUD, Procedures, Views, etc.)
+│  └─ 04_testes/ ................ TESTAR (Validação, Dashboards)
+│
+├─ docs/
+│  ├─ requisitos/ ............... Especificação
+│  ├─ guias/ .................... Howto e Procedimentos
+│  ├─ historico/ ................ Changelog
+│  └─ indice/ ................... Referência e Índices
+│
+└─ trabalho prático bd.pdf ....... Enunciado
+
+Cada pasta tem um propósito claro!
+
+
+✨ O QUE MUDOU (Reestruturação)
+════════════════════════════════════════════════════════════════════════════════
+
+ANTES (Desorganizado):
+────────────────────────
+CODIGO/
+├─ sql/
+│  ├─ 12 ficheiros misturados (schema, populacao, operacoes, testes)
+│  └─ Documentação também aqui
+├─ Ficheiros .md e .txt espalhados no root
+└─ Difícil encontrar o quê era quê
+
+DEPOIS (Organizado):
+────────────────────
+CODIGO/
+├─ sql/
+│  ├─ 01_schema/
+│  ├─ 02_populacao/
+│  ├─ 03_operacoes/
+│  └─ 04_testes/
+├─ docs/
+│  ├─ requisitos/
+│  ├─ guias/
+│  ├─ historico/
+│  └─ indice/
+└─ modelo_conceptual/
+
+BENEFÍCIOS:
+✅ Fácil encontrar qualquer coisa
+✅ Estrutura lógica por fase
+✅ Documentação categorizada
+✅ Espaço para crescimento
+
+
+🎯 ROADMAP FUTURO
+════════════════════════════════════════════════════════════════════════════════
+
+sql/02_populacao/dados_exemplo/
+├─ Adicionar mais dados de teste no futuro
+└─ Suportar diferentes cenários
+
+sql/03_operacoes/
+├─ Adicionar mais procedures
+├─ Adicionar mais functions
+└─ Adicionar mais views
+
+sql/04_testes/
+├─ Adicionar testes de performance
+├─ Adicionar testes de stress
+└─ Adicionar testes de segurança
+
+docs/guias/
+├─ Guia de Instalação
+├─ Guia de Manutenção
+├─ Guia de Troubleshooting
+└─ Guia de Performance
+
+
+📞 FICHEIROS MAIS IMPORTANTES
+════════════════════════════════════════════════════════════════════════════════
+
+Para COMPREENDER:
+├─ README.md ............................ Guia principal (LEIA!)
+├─ INDICE.txt ........................... Navegação e índice
+├─ docs/requisitos/REQUISITOS.md ....... O que foi pedido
+└─ modelo_conceptual/mod_conceptual_novas_modificacoes.xml (Modelo ER)
+
+Para USAR:
+├─ sql/01_schema/01_tabelas.sql ........ Criar BD
+├─ sql/02_populacao/03_povoamento.sql .. Popular dados
+└─ sql/03_operacoes/*.sql .............. Operações
+
+Para TESTAR:
+├─ sql/04_testes/08_teste_funcional.sql . Suite completa
+├─ sql/04_testes/verificacoes_rapidas.sql Dashboards
+└─ sql/04_testes/teste_bd.sh ........... Script bash
+
+Para REFERÊNCIA:
+├─ docs/requisitos/QUICK_REFERENCE.txt .. Cheat sheet
+├─ docs/indice/INDEX_FICHEIROS.txt ..... Índice detalhado
+└─ docs/historico/MUDANCAS_1N_MANUTENCAO_ORDEM.md (Detalhe técnico)
+
+
+✅ STATUS
+════════════════════════════════════════════════════════════════════════════════
+
+Versão: 2.0
+Conformidade: 100% com modelo conceptual
+Status: ✅ PRONTO PARA USAR
+Estrutura: ✅ ORGANIZADA
+Documentação: ✅ COMPLETA
+
+
+🎓 PRÓXIMOS PASSOS
+════════════════════════════════════════════════════════════════════════════════
+
+1. Ler README.md (5 minutos)
+2. Executar os 4 ficheiros SQL acima (10 minutos)
+3. Explorar a documentação conforme necessário
+4. Usar como referência para outras fases do projecto
+
+
+════════════════════════════════════════════════════════════════════════════════
+                       TUDO PRONTO! BOA SORTE! 🚀
+════════════════════════════════════════════════════════════════════════════════
+
+Data: 18 de Maio de 2026
+Estrutura criada: ✅ Completa
+Documentação: ✅ Completa
+Exemplos: ✅ Incluídos
+
+Comece por: cat README.md
+
+════════════════════════════════════════════════════════════════════════════════
+
