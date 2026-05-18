@@ -1,0 +1,37 @@
+Catalogo de procedures (mydb_uniforme)
+
+1. registar_avaria
+Abre uma avaria: cria manutencao, cria ordem_servico e marca o equipamento como "Em Manutencao".
+
+2. concluir_manutencao
+Fecha o ciclo: define data_fim da manutencao, conclui ordem_servico e volta equipamento para "Operacional".
+
+3. adicionar_intervencao_tecnico
+Associa tecnico a manutencao/intervencao com cargo e horas iniciais; opcionalmente muda ordem para "Em Execucao".
+
+4. abater_equipamento
+Marca equipamento como "Abatido/Inativo" e cancela ordens pendentes relacionadas.
+
+5. alterar_prioridade_ordem
+Atualiza prioridade da ordem_servico validando valores permitidos (Baixa, Media, Alta).
+
+6. abrir_manutencao
+Procedure de abertura manual de manutencao (alternativa simplificada ao registar_avaria).
+
+7. listar_alertas
+Lista alertas operacionais (ex.: manutencoes antigas, ordens pendentes ha muito tempo, equipamentos parados).
+
+8. validar_estado_ordem
+Valida transicoes de estado da ordem_servico (ex.: Pendente -> Em Execucao -> Concluida).
+
+9. adicionar_responsavel
+Cria responsavel e respetivo contacto_responsavel na mesma operacao/transacao.
+
+10. adicionar_tecnico
+Cria tecnico e respetivo contacto_tecnico na mesma operacao/transacao.
+
+11. adicionar_peca
+Cria nova peca no catalogo de manutencao (preco, designacao, garantia).
+
+12. abater_pecas
+Abate em lote todas as pecas com garantia expirada e sem uso no historico de manutencoes.
