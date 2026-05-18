@@ -1,130 +1,133 @@
 -- ============================================================
 -- SISTEMA DE GESTÃO DE EQUIPAMENTOS MÉDICOS
--- Ficheiro 02: População de Dados de Exemplo
+-- Ficheiro 03: Povoamento de Dados (Exemplos)
+-- Compatível com MySQL 8.0+ / MySQL Workbench
+-- Modelo: modelo fisico.sql (Montana)
+-- ============================================================
+-- ATENÇÃO: Ordem de inserção respeita as dependências de FK:
+--   Peca, contacto_responsavel, contacto_tecnico, Equipamento_contacto
+--   → Manutencao → Ordem_servico → Responsavel
+--   → Departamento → Localizacao
+--   → Tecnico → Equipamento → Intervencao_Tecnico
 -- ============================================================
 
 USE `mydb`;
 
 -- ============================================================
--- Inserção de Dados: contacto_responsavel
+-- DADOS DE TESTE / EXEMPLO
 -- ============================================================
-INSERT INTO `contacto_responsavel` (`idcontacto_responsavel`, `contacto`, `email`) VALUES
-(1, '217123456', 'joao.silva@hospital.pt'),
-(2, '217234567', 'maria.santos@hospital.pt'),
-(3, '217345678', 'carlos.oliveira@hospital.pt'),
-(4, '217456789', 'ana.costa@hospital.pt'),
-(5, '217567890', 'pedro.gomes@hospital.pt');
+
+-- ------------------------------------------------------------
+-- Peca (sem dependências)
+-- ------------------------------------------------------------
+INSERT INTO `Peca` (`preco`, `designacao`, `garantia`) VALUES
+    (50.00,  'Cabo ECG',             '2027-12-31'),
+    (120.00, 'Filtro de ar',         '2026-06-30'),
+    (200.00, 'Resistência Elétrica', '2028-03-31');
+
+-- ------------------------------------------------------------
+-- contacto_responsavel (sem dependências)
+-- ------------------------------------------------------------
+INSERT INTO `contacto_responsavel` (`contacto`, `email`) VALUES
+    ('915555001', 'joao.silva@hospital.pt'),
+    ('915555002', 'maria.santos@hospital.pt'),
+    ('915555003', 'carlos.oliveira@hospital.pt');
+
+-- ------------------------------------------------------------
+-- contacto_tecnico (sem dependências)
+-- ------------------------------------------------------------
+INSERT INTO `contacto_tecnico` (`contacto`, `email`) VALUES
+    ('919999001', 'pedro.tec@empresa.pt'),
+    ('919999002', 'ana.tec@empresa.pt'),
+    ('919999003', 'bruno.tec@empresa.pt');
+
+-- ------------------------------------------------------------
+-- Equipamento_contacto (sem dependências)
+-- ------------------------------------------------------------
+INSERT INTO `Equipamento_contacto` (`contacto`, `email`) VALUES
+    ('212345678', 'suporte.ecg@philips.pt'),
+    ('212345679', 'suporte.ct@siemens.pt'),
+    ('212345680', 'suporte.bis@erbe.pt');
+
+-- ------------------------------------------------------------
+-- Manutencao (depende de Peca e Equipamento — inserção temporária)
+-- NOTA: Equipamento ainda não existe; seguimos a ordem do modelo
+--       físico que cria Manutencao → Ordem_servico → Responsavel.
+--       Inserimos Manutencao com Equipamento_idEquipamento = 1,2,3
+--       (serão criados a seguir e terão esses IDs auto_increment).
+-- ------------------------------------------------------------
+INSERT INTO `Manutencao` (`custo`, `tipo`, `descricao`, `data_inicio`, `data_fim`,
+                           `Peca_idPeca`, `Equipamento_idEquipamento`) VALUES
+    (250.00,  'Preventiva', 'Manutenção preventiva do ECG',    '2025-05-01', '2025-05-03', 1, 1),
+    (1500.00, 'Corretiva',  'Reparação do tomógrafo',          '2025-05-05', '2025-05-10', 2, 2),
+    (100.00,  'Inspeção',   'Inspeção do bisturi elétrico',    '2025-05-02', '2025-05-02', 3, 3);
+
+-- ------------------------------------------------------------
+-- Ordem_servico (depende de Manutencao)
+-- ------------------------------------------------------------
+INSERT INTO `Ordem_servico` (`descricao`, `estado_atual`, `prioridade`,
+                              `Manutencao_id_manutencao`) VALUES
+    ('Manutenção ECG - Sala 101',       'Pendente',    'Normal', 1),
+    ('Reparação Tomógrafo - Sala 202',  'Em Execução', 'Alta',   2),
+    ('Inspeção Bisturi - Sala 301',     'Concluída',   'Baixa',  3);
+
+-- ------------------------------------------------------------
+-- Responsavel (depende de Ordem_servico e contacto_responsavel)
+-- ------------------------------------------------------------
+INSERT INTO `Responsavel` (`nome`, `data_nascimento`,
+                            `Ordem_de_servico_idOrdem`,
+                            `contacto_responsavel_idcontacto_responsavel`) VALUES
+    ('Dr. João Silva',       '1970-05-15', 1, 1),
+    ('Dra. Maria Santos',    '1975-08-20', 2, 2),
+    ('Dr. Carlos Oliveira',  '1968-03-10', 3, 3);
+
+-- ------------------------------------------------------------
+-- Departamento (depende de Responsavel)
+-- ------------------------------------------------------------
+INSERT INTO `Departamento` (`designacao`, `descricao`, `idResponsavel`) VALUES
+    ('Cardiologia', 'Departamento de Cardiologia', 1),
+    ('Radiologia',  'Departamento de Radiologia',  2),
+    ('Cirurgia',    'Departamento de Cirurgia',    3);
+
+-- ------------------------------------------------------------
+-- Localizacao (depende de Departamento)
+-- ------------------------------------------------------------
+INSERT INTO `Localizacao` (`descricao`, `sala`, `piso`, `edificio`,
+                            `Departamento_idDepartamento`) VALUES
+    ('Sala ECG Cardiologia',   '101', '1', 'Bloco A', 1),
+    ('Sala TAC Radiologia',    '202', '2', 'Bloco B', 2),
+    ('Sala Cirurgia Principal','301', '3', 'Bloco A', 3);
+
+-- ------------------------------------------------------------
+-- Tecnico (depende de contacto_tecnico)
+-- ------------------------------------------------------------
+INSERT INTO `Tecnico` (`data_inicio_carreira`, `nome`, `especialidade`,
+                        `contacto_tecnico_idcontacto_tecnico`) VALUES
+    ('2010-01-10', 'Técnico Pedro', 'Equipamentos Cardíacos', 1),
+    ('2015-05-15', 'Técnico Ana',   'Imaging',                 2),
+    ('2018-03-20', 'Técnico Bruno', 'Cirurgia',                3);
+
+-- ------------------------------------------------------------
+-- Equipamento (depende de Equipamento_contacto, Departamento, Localizacao)
+-- ------------------------------------------------------------
+INSERT INTO `Equipamento` (`estado`, `descricao`, `fabricante`, `designacao`, `data_aquisicao`,
+                            `Equipamento_contacto_idEquipamento_contacto1`,
+                            `Departamento_idDepartamento`,
+                            `Localizacao_idLocalizacao`) VALUES
+    ('Operacional',   'Dispositivo para aquisição de ECG',   'Philips', 'Eletrocardiograma', '2020-01-15', 1, 1, 1),
+    ('Operacional',   'Tomógrafo de Tomografia Computada',   'Siemens', 'Tomógrafo',         '2018-06-20', 2, 2, 2),
+    ('Em Manutenção', 'Bisturi elétrico para cirurgia',      'Erbe',    'Bisturi Elétrico',  '2021-03-10', 3, 3, 3);
+
+-- ------------------------------------------------------------
+-- Intervencao_Tecnico (depende de Tecnico e Manutencao)
+-- ------------------------------------------------------------
+INSERT INTO `Intervencao_Tecnico` (`Cargo`, `horas_trabalho`,
+                                    `Tecnico_idTecnico`,
+                                    `Manutencao_id_manutencao`) VALUES
+    ('Técnico Responsável',  4,  1, 1),
+    ('Técnico Especialista', 24, 2, 2),
+    ('Técnico Inspetor',     2,  1, 3);
 
 -- ============================================================
--- Inserção de Dados: contacto_tecnico
--- ============================================================
-INSERT INTO `contacto_tecnico` (`idcontacto_tecnico`, `contacto`, `email`) VALUES
-(1, '912345678', 'tecnico1@manutencao.pt'),
-(2, '912456789', 'tecnico2@manutencao.pt'),
-(3, '912567890', 'tecnico3@manutencao.pt'),
-(4, '912678901', 'tecnico4@manutencao.pt'),
-(5, '912789012', 'tecnico5@manutencao.pt');
-
--- ============================================================
--- Inserção de Dados: Equipamento_contacto
--- ============================================================
-INSERT INTO `Equipamento_contacto` (`idEquipamento_contacto`, `contacto`, `email`) VALUES
-(1, '211111111', 'suporte1@fabricante.pt'),
-(2, '211222222', 'suporte2@fabricante.pt'),
-(3, '211333333', 'suporte3@fabricante.pt'),
-(4, '211444444', 'suporte4@fabricante.pt'),
-(5, '211555555', 'suporte5@fabricante.pt');
-
--- ============================================================
--- Inserção de Dados: Responsavel
--- ============================================================
-INSERT INTO `Responsavel` (`idResponsavel`, `nome`, `data_nascimento`, `contacto_responsavel_idcontacto_responsavel`) VALUES
-(1, 'João Silva', '1975-03-15', 1),
-(2, 'Maria Santos', '1980-07-22', 2),
-(3, 'Carlos Oliveira', '1978-11-08', 3),
-(4, 'Ana Costa', '1982-05-19', 4),
-(5, 'Pedro Gomes', '1976-09-12', 5);
-
--- ============================================================
--- Inserção de Dados: Departamento
--- ============================================================
-INSERT INTO `Departamento` (`idDepartamento`, `designacao`, `descricao`, `idResponsavel`) VALUES
-(1, 'Cardiologia', 'Departamento de Cardiologia', 1),
-(2, 'Radiologia', 'Departamento de Radiologia', 2),
-(3, 'Laboratório', 'Departamento de Análises Clínicas', 3),
-(4, 'Oftalmologia', 'Departamento de Oftalmologia', 4),
-(5, 'Cirurgia', 'Departamento de Cirurgia', 5);
-
--- ============================================================
--- Inserção de Dados: Localizacao
--- ============================================================
-INSERT INTO `Localizacao` (`idLocalizacao`, `descricao`, `sala`, `piso`, `edificio`, `Departamento_idDepartamento`) VALUES
-(1, 'Sala de Ecocardiografia', '101', '1', 'Bloco A', 1),
-(2, 'Sala de Radiologia', '201', '2', 'Bloco A', 2),
-(3, 'Sala de Análises', '301', '3', 'Bloco B', 3),
-(4, 'Consultório Oftalmologia', '102', '1', 'Bloco B', 4),
-(5, 'Bloco Operatório', '401', '4', 'Bloco C', 5);
-
--- ============================================================
--- Inserção de Dados: Peca
--- ============================================================
-INSERT INTO `Peca` (`idPeca`, `preco`, `designacao`, `garantia`) VALUES
-(1, 1500.00, 'Probe Ecocardiografia', '2026-12-31'),
-(2, 850.00, 'Tubo de Raios-X', '2027-06-30'),
-(3, 350.00, 'Filtro de Centrífuga', '2025-12-31'),
-(4, 2200.00, 'Lente Oftalmológica', '2028-03-31'),
-(5, 5000.00, 'Válvula Cirúrgica Esterilizável', '2027-09-30');
-
--- ============================================================
--- Inserção de Dados: Tecnico
--- ============================================================
-INSERT INTO `Tecnico` (`idTecnico`, `data_inicio_carreira`, `nome`, `especialidade`, `contacto_tecnico_idcontacto_tecnico`) VALUES
-(1, '2010-01-15', 'António Ferreira', 'Ecocardiografia', 1),
-(2, '2012-05-20', 'Ricardo Martins', 'Radiologia', 2),
-(3, '2015-09-10', 'Nuno Santos', 'Análises Clínicas', 3),
-(4, '2011-03-25', 'Miguel Rodrigues', 'Oftalmologia', 4),
-(5, '2018-07-01', 'Paulo Lopes', 'Equipamento Cirúrgico', 5);
-
--- ============================================================
--- Inserção de Dados: Equipamento
--- ============================================================
-INSERT INTO `Equipamento` (`idEquipamento`, `estado`, `descricao`, `fabricante`, `designacao`, `data_aquisicao`, `Equipamento_contacto_idEquipamento_contacto1`, `Departamento_idDepartamento`, `Localizacao_idLocalizacao`) VALUES
-(1, 'Operacional', 'Ecocardiógrafo modelo premium', 'GE Healthcare', 'GE Vivid E95', '2020-05-15', 1, 1, 1),
-(2, 'Operacional', 'Sistema de Radiologia Digital', 'Philips', 'Philips DigitalDiagnost C90', '2019-08-20', 2, 2, 2),
-(3, 'Operacional', 'Centrifugadora automática', 'Siemens', 'Siemens RAPIDLAB 1200', '2021-03-10', 3, 3, 3),
-(4, 'Manutenção Preventiva', 'Microscópio Oftalmológico', 'Zeiss', 'Zeiss OPMI Lumera 700', '2018-11-05', 4, 4, 4),
-(5, 'Operacional', 'Esterilizador Cirúrgico', 'Getinge', 'Getinge AMSCO 250P', '2022-01-25', 5, 5, 5);
-
--- ============================================================
--- Inserção de Dados: Manutencao
--- ============================================================
-INSERT INTO `Manutencao` (`id_manutencao`, `custo`, `tipo`, `descricao`, `data_inicio`, `data_fim`, `Peca_idPeca`, `Equipamento_idEquipamento`) VALUES
-(1, 2350.00, 'Preventiva', 'Manutenção anual Ecocardiógraf', '2025-01-10', '2025-01-15', 1, 1),
-(2, 1200.00, 'Corretiva', 'Substituição de Tubo de Raios-X', '2025-02-01', '2025-02-05', 2, 2),
-(3, 450.00, 'Preventiva', 'Limpeza e calibração', '2025-02-15', '2025-02-18', 3, 3),
-(4, 3500.00, 'Preventiva', 'Manutenção geral oftalmológica', '2025-03-01', '2025-03-08', 4, 4),
-(5, 6200.00, 'Corretiva', 'Reparação do motor esterilizador', '2025-03-10', '2025-03-20', 5, 5);
-
--- ============================================================
--- Inserção de Dados: Ordem_servico
--- ============================================================
-INSERT INTO `Ordem_servico` (`idOrdem`, `descricao`, `estado_atual`, `prioridade`, `Manutencao_id_manutencao`) VALUES
-(1, 'Manutenção preventiva anual Ecocardiógraf', 'Concluída', 'Normal', 1),
-(2, 'Reparação urgente Radiologia', 'Em Progresso', 'Alta', 2),
-(3, 'Limpeza de filtros', 'Agendada', 'Baixa', 3),
-(4, 'Revisão oftalmológica completa', 'Concluída', 'Normal', 4),
-(5, 'Reparação crítica - Esterilizador', 'Em Progresso', 'Crítica', 5);
-
--- ============================================================
--- Inserção de Dados: Intervencao_Tecnico
--- ============================================================
-INSERT INTO `Intervencao_Tecnico` (`idIntervencao`, `Cargo`, `horas_trabalho`, `Tecnico_idTecnico`, `Manutencao_id_manutencao`) VALUES
-(1, 'Técnico Senior', 8, 1, 1),
-(2, 'Técnico Especialista', 12, 2, 2),
-(3, 'Técnico Junior', 4, 3, 3),
-(4, 'Técnico Senior', 16, 4, 4),
-(5, 'Técnico Especialista', 20, 5, 5);
-
--- ============================================================
--- Fim da População de Dados
+-- FIM DO FICHEIRO 03_povoamento.sql
 -- ============================================================

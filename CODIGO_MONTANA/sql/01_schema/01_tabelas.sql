@@ -1,107 +1,102 @@
--- ============================================================
--- SISTEMA DE GESTÃO DE EQUIPAMENTOS MÉDICOS - MODELO FÍSICO
--- Ficheiro 01: Criação de Tabelas e Constraints
--- Compatível com MySQL 8.0+
--- Modelo: modelo_fisico.sql (Montana)
--- ============================================================
+-- MySQL Workbench Forward Engineering
 
--- Criar schema
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8;
-USE `mydb`;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- ============================================================
--- LIMPEZA (descomente para reset completo)
--- ============================================================
-/*
-DROP TABLE IF EXISTS `Intervencao_Tecnico`;
-DROP TABLE IF EXISTS `Manutencao`;
-DROP TABLE IF EXISTS `Ordem_servico`;
-DROP TABLE IF EXISTS `Equipamento`;
-DROP TABLE IF EXISTS `Tecnico`;
-DROP TABLE IF EXISTS `Localizacao`;
-DROP TABLE IF EXISTS `Departamento`;
-DROP TABLE IF EXISTS `Responsavel`;
-DROP TABLE IF EXISTS `Peca`;
-DROP TABLE IF EXISTS `contacto_tecnico`;
-DROP TABLE IF EXISTS `contacto_responsavel`;
-DROP TABLE IF EXISTS `Equipamento_contacto`;
-*/
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
 
--- ============================================================
--- Table: Peca
--- Descrição: Peças e componentes do equipamento
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Peca` (
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Peca`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Peca` (
   `idPeca` INT NOT NULL AUTO_INCREMENT,
-  `preco` DECIMAL(10,2) NOT NULL,
+  `preco` DECIMAL NOT NULL,
   `designacao` VARCHAR(45) NOT NULL,
   `garantia` DATE NOT NULL,
   UNIQUE INDEX `idPeça_UNIQUE` (`idPeca` ASC) VISIBLE,
-  PRIMARY KEY (`idPeca`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`idPeca`))
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: contacto_responsavel
--- Descrição: Contactos dos responsáveis
--- ============================================================
-CREATE TABLE IF NOT EXISTS `contacto_responsavel` (
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`contacto_responsavel`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`contacto_responsavel` (
   `idcontacto_responsavel` INT NOT NULL AUTO_INCREMENT,
   `contacto` VARCHAR(45) NULL,
   `email` VARCHAR(45) NULL,
   PRIMARY KEY (`idcontacto_responsavel`),
-  UNIQUE INDEX `idcontacto_responsavel_UNIQUE` (`idcontacto_responsavel` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE INDEX `idcontacto_responsavel_UNIQUE` (`idcontacto_responsavel` ASC) VISIBLE)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: contacto_tecnico
--- Descrição: Contactos dos técnicos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `contacto_tecnico` (
+
+-- -----------------------------------------------------
+-- Table `mydb`.`contacto_tecnico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`contacto_tecnico` (
   `idcontacto_tecnico` INT NOT NULL AUTO_INCREMENT,
   `contacto` VARCHAR(15) NULL,
   `email` VARCHAR(45) NULL,
   PRIMARY KEY (`idcontacto_tecnico`),
-  UNIQUE INDEX `idcontacto_tecnico_UNIQUE` (`idcontacto_tecnico` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE INDEX `idcontacto_tecnico_UNIQUE` (`idcontacto_tecnico` ASC) VISIBLE)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Equipamento_contacto
--- Descrição: Contactos de suporte dos equipamentos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Equipamento_contacto` (
+-- -----------------------------------------------------
+-- Table `mydb`.`Equipamento_contacto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Equipamento_contacto` (
   `idEquipamento_contacto` INT NOT NULL AUTO_INCREMENT,
   `contacto` VARCHAR(15) NULL,
   `email` VARCHAR(45) NULL,
   PRIMARY KEY (`idEquipamento_contacto`),
-  UNIQUE INDEX `idEquipamento_contacto_UNIQUE` (`idEquipamento_contacto` ASC) VISIBLE
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE INDEX `idEquipamento_contacto_UNIQUE` (`idEquipamento_contacto` ASC) VISIBLE)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Responsavel
--- Descrição: Responsáveis pelos departamentos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Responsavel` (
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Responsavel`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Responsavel` (
   `idResponsavel` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(45) NOT NULL,
   `data_nascimento` DATE NOT NULL,
-  `Ordem_de_servico_idOrdem` INT,
+  `Ordem de serviço_idOrdem` INT NOT NULL,
   `contacto_responsavel_idcontacto_responsavel` INT NOT NULL,
-  INDEX `fk_Responsavel_Ordem_de_servico1_idx` (`Ordem_de_servico_idOrdem` ASC) VISIBLE,
-  UNIQUE INDEX `idResponsavel_UNIQUE` (`idResponsavel` ASC) VISIBLE,
-  PRIMARY KEY (`idResponsavel`),
+  INDEX `fk_Responsável_Ordem de serviço1_idx` (`Ordem de serviço_idOrdem` ASC) VISIBLE,
+  UNIQUE INDEX `idResponsável_UNIQUE` (`idResponsavel` ASC) VISIBLE,
+  PRIMARY KEY (`idResponsavel`, `contacto_responsavel_idcontacto_responsavel`),
   INDEX `fk_Responsavel_contacto_responsavel1_idx` (`contacto_responsavel_idcontacto_responsavel` ASC) VISIBLE,
+  CONSTRAINT `fk_Responsável_Ordem de serviço1`
+    FOREIGN KEY (`Ordem de serviço_idOrdem`)
+    REFERENCES `mydb`.`Ordem_servico` (`idOrdem`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_Responsavel_contacto_responsavel1`
     FOREIGN KEY (`contacto_responsavel_idcontacto_responsavel`)
-    REFERENCES `contacto_responsavel` (`idcontacto_responsavel`)
+    REFERENCES `mydb`.`contacto_responsavel` (`idcontacto_responsavel`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Departamento
--- Descrição: Departamentos clínicos do hospital
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Departamento` (
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Departamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Departamento` (
   `idDepartamento` INT NOT NULL AUTO_INCREMENT,
   `designacao` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(45) NOT NULL,
@@ -111,16 +106,17 @@ CREATE TABLE IF NOT EXISTS `Departamento` (
   UNIQUE INDEX `idDepartamento_UNIQUE` (`idDepartamento` ASC) VISIBLE,
   CONSTRAINT `fk_departamento_responsavel`
     FOREIGN KEY (`idResponsavel`)
-    REFERENCES `Responsavel` (`idResponsavel`)
+    REFERENCES `mydb`.`Responsavel` (`idResponsavel`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Localizacao
--- Descrição: Localização física dos equipamentos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Localizacao` (
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Localizacao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Localizacao` (
   `idLocalizacao` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(45) NULL,
   `sala` VARCHAR(45) NOT NULL,
@@ -128,41 +124,45 @@ CREATE TABLE IF NOT EXISTS `Localizacao` (
   `edificio` VARCHAR(45) NOT NULL,
   `Departamento_idDepartamento` INT NOT NULL,
   PRIMARY KEY (`idLocalizacao`),
-  INDEX `fk_Localizacao_Departamento1_idx` (`Departamento_idDepartamento` ASC) VISIBLE,
+  INDEX `fk_Localização_Departamento1_idx` (`Departamento_idDepartamento` ASC) VISIBLE,
   UNIQUE INDEX `descrição_UNIQUE` (`descricao` ASC) VISIBLE,
-  UNIQUE INDEX `idLocalizacao_UNIQUE` (`idLocalizacao` ASC) VISIBLE,
-  CONSTRAINT `fk_Localizacao_Departamento1`
+  UNIQUE INDEX `idLocalização_UNIQUE` (`idLocalizacao` ASC) VISIBLE,
+  CONSTRAINT `fk_Localização_Departamento1`
     FOREIGN KEY (`Departamento_idDepartamento`)
-    REFERENCES `Departamento` (`idDepartamento`)
+    REFERENCES `mydb`.`Departamento` (`idDepartamento`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Tecnico
--- Descrição: Técnicos de manutenção
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Tecnico` (
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Tecnico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Tecnico` (
   `idTecnico` INT NOT NULL AUTO_INCREMENT,
-  `data_inicio_carreira` VARCHAR(45) NOT NULL,
+  `data_início_carreira` VARCHAR(45) NOT NULL,
   `nome` VARCHAR(45) NOT NULL,
   `especialidade` VARCHAR(45) NOT NULL,
   `contacto_tecnico_idcontacto_tecnico` INT NOT NULL,
-  PRIMARY KEY (`idTecnico`),
+  PRIMARY KEY (`idTecnico`, `contacto_tecnico_idcontacto_tecnico`),
   UNIQUE INDEX `idTecnico_UNIQUE` (`idTecnico` ASC) VISIBLE,
   INDEX `fk_Tecnico_contacto_tecnico1_idx` (`contacto_tecnico_idcontacto_tecnico` ASC) VISIBLE,
   CONSTRAINT `fk_Tecnico_contacto_tecnico1`
     FOREIGN KEY (`contacto_tecnico_idcontacto_tecnico`)
-    REFERENCES `contacto_tecnico` (`idcontacto_tecnico`)
+    REFERENCES `mydb`.`contacto_tecnico` (`idcontacto_tecnico`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Equipamento
--- Descrição: Equipamentos médicos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Equipamento` (
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Equipamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Equipamento` (
   `idEquipamento` INT NOT NULL AUTO_INCREMENT,
   `estado` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(45) NULL,
@@ -179,28 +179,28 @@ CREATE TABLE IF NOT EXISTS `Equipamento` (
   INDEX `fk_Equipamento_Localizacao1_idx` (`Localizacao_idLocalizacao` ASC) VISIBLE,
   CONSTRAINT `fk_Equipamento_Equipamento_contacto1`
     FOREIGN KEY (`Equipamento_contacto_idEquipamento_contacto1`)
-    REFERENCES `Equipamento_contacto` (`idEquipamento_contacto`)
+    REFERENCES `mydb`.`Equipamento_contacto` (`idEquipamento_contacto`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Equipamento_Departamento1`
     FOREIGN KEY (`Departamento_idDepartamento`)
-    REFERENCES `Departamento` (`idDepartamento`)
+    REFERENCES `mydb`.`Departamento` (`idDepartamento`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Equipamento_Localizacao1`
     FOREIGN KEY (`Localizacao_idLocalizacao`)
-    REFERENCES `Localizacao` (`idLocalizacao`)
+    REFERENCES `mydb`.`Localizacao` (`idLocalizacao`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Manutencao
--- Descrição: Registos de manutenção de equipamentos
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Manutencao` (
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Manutencao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Manutencao` (
   `id_manutencao` INT NOT NULL AUTO_INCREMENT,
-  `custo` DECIMAL(10,2) NOT NULL,
+  `custo` DECIMAL NOT NULL,
   `tipo` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(45) NULL,
   `data_inicio` DATE NOT NULL,
@@ -208,67 +208,70 @@ CREATE TABLE IF NOT EXISTS `Manutencao` (
   `Peca_idPeca` INT NOT NULL,
   `Equipamento_idEquipamento` INT NOT NULL,
   PRIMARY KEY (`id_manutencao`),
-  UNIQUE INDEX `id_manutencao_UNIQUE` (`id_manutencao` ASC) VISIBLE,
-  INDEX `fk_Manutencao_Peca1_idx` (`Peca_idPeca` ASC) VISIBLE,
+  UNIQUE INDEX `id_manutenção_UNIQUE` (`id_manutencao` ASC) VISIBLE,
+  INDEX `fk_Manutenção_Peça1_idx` (`Peca_idPeca` ASC) VISIBLE,
   INDEX `fk_Manutencao_Equipamento1_idx` (`Equipamento_idEquipamento` ASC) VISIBLE,
-  CONSTRAINT `fk_Manutencao_Peca1`
+  CONSTRAINT `fk_Manutenção_Peça1`
     FOREIGN KEY (`Peca_idPeca`)
-    REFERENCES `Peca` (`idPeca`)
+    REFERENCES `mydb`.`Peca` (`idPeca`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Manutencao_Equipamento1`
     FOREIGN KEY (`Equipamento_idEquipamento`)
-    REFERENCES `Equipamento` (`idEquipamento`)
+    REFERENCES `mydb`.`Equipamento` (`idEquipamento`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Ordem_servico
--- Descrição: Ordens de serviço de manutenção
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Ordem_servico` (
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Ordem_servico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Ordem_servico` (
   `idOrdem` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(45) NULL,
   `estado_atual` VARCHAR(45) NOT NULL,
   `prioridade` VARCHAR(45) NOT NULL,
   `Manutencao_id_manutencao` INT NOT NULL,
   PRIMARY KEY (`idOrdem`),
-  INDEX `fk_Ordem_servico_Manutencao1_idx` (`Manutencao_id_manutencao` ASC) VISIBLE,
+  INDEX `fk_Ordem de serviço_Manutenção1_idx` (`Manutencao_id_manutencao` ASC) VISIBLE,
   UNIQUE INDEX `idOrdem_UNIQUE` (`idOrdem` ASC) VISIBLE,
-  CONSTRAINT `fk_Ordem_servico_Manutencao1`
+  CONSTRAINT `fk_Ordem de serviço_Manutenção1`
     FOREIGN KEY (`Manutencao_id_manutencao`)
-    REFERENCES `Manutencao` (`id_manutencao`)
+    REFERENCES `mydb`.`Manutencao` (`id_manutencao`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Table: Intervencao_Tecnico
--- Descrição: Intervenções dos técnicos em manutenções
--- ============================================================
-CREATE TABLE IF NOT EXISTS `Intervencao_Tecnico` (
+
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Intervencao_Tecnico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Intervencao_Tecnico` (
   `idIntervencao` INT NOT NULL AUTO_INCREMENT,
   `Cargo` VARCHAR(45) NOT NULL,
   `horas_trabalho` INT NOT NULL,
   `Tecnico_idTecnico` INT NOT NULL,
   `Manutencao_id_manutencao` INT NOT NULL,
-  UNIQUE INDEX `idIntervencao_UNIQUE` (`idIntervencao` ASC) VISIBLE,
+  UNIQUE INDEX `idIntervenção_UNIQUE` (`idIntervencao` ASC) VISIBLE,
   PRIMARY KEY (`idIntervencao`),
   INDEX `fk_intervencao_tecnico_idx` (`Tecnico_idTecnico` ASC) VISIBLE,
   INDEX `fk_intervencao_manutencao_idx` (`Manutencao_id_manutencao` ASC) VISIBLE,
   CONSTRAINT `fk_intervencao_tecnico`
     FOREIGN KEY (`Tecnico_idTecnico`)
-    REFERENCES `Tecnico` (`idTecnico`)
+    REFERENCES `mydb`.`Tecnico` (`idTecnico`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_intervencao_manutencao`
     FOREIGN KEY (`Manutencao_id_manutencao`)
-    REFERENCES `Manutencao` (`id_manutencao`)
+    REFERENCES `mydb`.`Manutencao` (`id_manutencao`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
--- ============================================================
--- Fim da Criação de Tabelas
--- ============================================================
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

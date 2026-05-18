@@ -1,140 +1,182 @@
 -- ============================================================
 -- SISTEMA DE GESTÃO DE EQUIPAMENTOS MÉDICOS
--- Ficheiro 03.04: Stored Procedures Avançadas
+-- Ficheiro 04: Stored Procedures de Negócio
+-- Compatível com MySQL 8.0+ / MySQL Workbench
+-- Modelo: modelo fisico.sql (Montana)
 -- ============================================================
 
 USE `mydb`;
 
--- ============================================================
--- Procedure: Obter Custo Total de Manutenção por Equipamento
--- ============================================================
 DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS sp_custo_total_manutencao_equipamento(
-    IN p_equipamento_id INT
+
+-- ============================================================
+-- SP 1: Registar manutenção completa numa transação
+-- (cria manutenção + ordem de serviço numa só operação atómica)
+-- ============================================================
+DROP PROCEDURE IF EXISTS sp_registar_manutencao_completa $$
+CREATE PROCEDURE sp_registar_manutencao_completa(
+    IN p_custo              DECIMAL(10,2),
+    IN p_tipo               VARCHAR(45),
+    IN p_descricao          VARCHAR(45),
+    IN p_data_inicio        DATE,
+    IN p_data_fim           DATE,
+    IN p_idPeca             INT,
+    IN p_idEquipamento      INT,
+    IN p_descricao_os       VARCHAR(45),
+    IN p_estado_os          VARCHAR(45),
+    IN p_prioridade         VARCHAR(45)
 )
 BEGIN
-    SELECT 
-        e.idEquipamento,
-        e.designacao,
-        e.fabricante,
-        COUNT(m.id_manutencao) as num_manutencoes,
-        SUM(m.custo) as custo_total,
-        AVG(m.custo) as custo_medio,
-        MIN(m.data_inicio) as primeira_manutencao,
-        MAX(m.data_fim) as ultima_manutencao
+    DECLARE v_id_manutencao INT;
+    DECLARE v_id_ordem      INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Erro ao registar manutenção. Operação revertida.';
+    END;
+
+    START TRANSACTION;
+
+    -- 1. Criar a manutenção
+    INSERT INTO `Manutencao` (`custo`, `tipo`, `descricao`, `data_inicio`, `data_fim`,
+                               `Peca_idPeca`, `Equipamento_idEquipamento`)
+    VALUES (p_custo, p_tipo, p_descricao, p_data_inicio, p_data_fim, p_idPeca, p_idEquipamento);
+    SET v_id_manutencao = LAST_INSERT_ID();
+
+    -- 2. Criar a ordem de serviço associada
+    INSERT INTO `Ordem_servico` (`descricao`, `estado_atual`, `prioridade`,
+                                  `Manutencao_id_manutencao`)
+    VALUES (p_descricao_os, p_estado_os, p_prioridade, v_id_manutencao);
+    SET v_id_ordem = LAST_INSERT_ID();
+
+    -- 3. Atualizar estado do equipamento
+    UPDATE `Equipamento` SET `estado` = 'Em Manutenção'
+    WHERE `idEquipamento` = p_idEquipamento;
+
+    COMMIT;
+
+    SELECT v_id_manutencao AS id_manutencao,
+           v_id_ordem      AS id_ordem,
+           'Manutenção e Ordem de Serviço registadas com sucesso' AS mensagem;
+END $$
+
+-- ============================================================
+-- SP 2: Alocar técnico a uma manutenção existente
+-- ============================================================
+DROP PROCEDURE IF EXISTS sp_alocar_tecnico_manutencao $$
+CREATE PROCEDURE sp_alocar_tecnico_manutencao(
+    IN p_id_manutencao  INT,
+    IN p_id_tecnico     INT,
+    IN p_cargo          VARCHAR(45),
+    IN p_horas_trabalho INT
+)
+BEGIN
+    DECLARE v_count INT;
+
+    -- Validar existência da manutenção
+    SELECT COUNT(*) INTO v_count FROM `Manutencao` WHERE `id_manutencao` = p_id_manutencao;
+    IF v_count = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Manutenção não encontrada.';
+    END IF;
+
+    -- Validar existência do técnico
+    SELECT COUNT(*) INTO v_count FROM `Tecnico` WHERE `idTecnico` = p_id_tecnico;
+    IF v_count = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Técnico não encontrado.';
+    END IF;
+
+    INSERT INTO `Intervencao_Tecnico` (`Cargo`, `horas_trabalho`,
+                                        `Tecnico_idTecnico`, `Manutencao_id_manutencao`)
+    VALUES (p_cargo, p_horas_trabalho, p_id_tecnico, p_id_manutencao);
+
+    SELECT LAST_INSERT_ID() AS idIntervencao, 'Técnico alocado com sucesso' AS mensagem;
+END $$
+
+-- ============================================================
+-- SP 3: Fechar ordem de serviço e marcar equipamento operacional
+-- ============================================================
+DROP PROCEDURE IF EXISTS sp_fechar_ordem_servico $$
+CREATE PROCEDURE sp_fechar_ordem_servico(
+    IN p_id_ordem INT
+)
+BEGIN
+    DECLARE v_id_manutencao INT;
+    DECLARE v_id_equipamento INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro ao fechar ordem de serviço.';
+    END;
+
+    START TRANSACTION;
+
+    -- Obter a manutenção associada à ordem
+    SELECT `Manutencao_id_manutencao` INTO v_id_manutencao
+    FROM `Ordem_servico` WHERE `idOrdem` = p_id_ordem;
+
+    -- Obter o equipamento associado à manutenção
+    SELECT `Equipamento_idEquipamento` INTO v_id_equipamento
+    FROM `Manutencao` WHERE `id_manutencao` = v_id_manutencao;
+
+    -- Marcar ordem como concluída
+    UPDATE `Ordem_servico` SET `estado_atual` = 'Concluída' WHERE `idOrdem` = p_id_ordem;
+
+    -- Marcar equipamento como operacional
+    UPDATE `Equipamento` SET `estado` = 'Operacional' WHERE `idEquipamento` = v_id_equipamento;
+
+    COMMIT;
+
+    SELECT 'Ordem fechada e equipamento marcado como Operacional' AS mensagem;
+END $$
+
+-- ============================================================
+-- SP 4: Relatório de equipamentos por departamento
+-- ============================================================
+DROP PROCEDURE IF EXISTS sp_relatorio_equipamentos_dept $$
+CREATE PROCEDURE sp_relatorio_equipamentos_dept(IN p_idDepartamento INT)
+BEGIN
+    SELECT
+        e.`idEquipamento`,
+        e.`designacao`,
+        e.`fabricante`,
+        e.`estado`,
+        e.`data_aquisicao`,
+        TIMESTAMPDIFF(YEAR, e.`data_aquisicao`, CURDATE()) AS idade_anos,
+        l.`sala`,
+        l.`piso`,
+        l.`edificio`
     FROM `Equipamento` e
-    LEFT JOIN `Manutencao` m ON e.idEquipamento = m.Equipamento_idEquipamento
-    WHERE e.idEquipamento = p_equipamento_id
-    GROUP BY e.idEquipamento, e.designacao, e.fabricante;
-END$$
-DELIMITER ;
+    LEFT JOIN `Localizacao` l ON e.`Localizacao_idLocalizacao` = l.`idLocalizacao`
+    WHERE e.`Departamento_idDepartamento` = p_idDepartamento
+    ORDER BY e.`estado`, e.`designacao`;
+END $$
 
 -- ============================================================
--- Procedure: Listar Ordens de Serviço Pendentes
+-- SP 5: Listar intervenções de um técnico
 -- ============================================================
-DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS sp_listar_ordens_pendentes()
+DROP PROCEDURE IF EXISTS sp_intervencoes_por_tecnico $$
+CREATE PROCEDURE sp_intervencoes_por_tecnico(IN p_idTecnico INT)
 BEGIN
-    SELECT 
-        o.idOrdem,
-        o.descricao,
-        o.estado_atual,
-        o.prioridade,
-        m.tipo,
-        m.custo,
-        e.designacao as equipamento,
-        d.designacao as departamento
-    FROM `Ordem_servico` o
-    INNER JOIN `Manutencao` m ON o.Manutencao_id_manutencao = m.id_manutencao
-    INNER JOIN `Equipamento` e ON m.Equipamento_idEquipamento = e.idEquipamento
-    INNER JOIN `Departamento` d ON e.Departamento_idDepartamento = d.idDepartamento
-    WHERE o.estado_atual IN ('Agendada', 'Em Progresso')
-    ORDER BY 
-        CASE WHEN o.prioridade = 'Crítica' THEN 1
-             WHEN o.prioridade = 'Alta' THEN 2
-             WHEN o.prioridade = 'Normal' THEN 3
-             ELSE 4 END,
-        o.idOrdem;
-END$$
+    SELECT
+        it.`idIntervencao`,
+        it.`Cargo`,
+        it.`horas_trabalho`,
+        m.`id_manutencao`,
+        m.`tipo`,
+        m.`data_inicio`,
+        m.`data_fim`,
+        m.`custo`,
+        e.`designacao` AS equipamento
+    FROM `Intervencao_Tecnico` it
+    JOIN `Manutencao` m ON it.`Manutencao_id_manutencao` = m.`id_manutencao`
+    JOIN `Equipamento` e ON m.`Equipamento_idEquipamento` = e.`idEquipamento`
+    WHERE it.`Tecnico_idTecnico` = p_idTecnico
+    ORDER BY m.`data_inicio` DESC;
+END $$
+
 DELIMITER ;
 
 -- ============================================================
--- Procedure: Relatório de Carga de Técnico
--- ============================================================
-DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS sp_relatorio_carga_tecnico(
-    IN p_tecnico_id INT
-)
-BEGIN
-    SELECT 
-        t.idTecnico,
-        t.nome,
-        t.especialidade,
-        COUNT(DISTINCT it.idIntervencao) as num_intervencoes,
-        SUM(it.horas_trabalho) as total_horas,
-        AVG(it.horas_trabalho) as media_horas_intervencao,
-        GROUP_CONCAT(DISTINCT m.tipo) as tipos_manutencao,
-        MAX(m.data_fim) as ultima_intervencao
-    FROM `Tecnico` t
-    LEFT JOIN `Intervencao_Tecnico` it ON t.idTecnico = it.Tecnico_idTecnico
-    LEFT JOIN `Manutencao` m ON it.Manutencao_id_manutencao = m.id_manutencao
-    WHERE t.idTecnico = p_tecnico_id
-    GROUP BY t.idTecnico, t.nome, t.especialidade;
-END$$
-DELIMITER ;
-
--- ============================================================
--- Procedure: Dashboard - Resumo Geral do Sistema
--- ============================================================
-DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS sp_dashboard_geral()
-BEGIN
-    DECLARE v_total_equipamentos INT;
-    DECLARE v_equipamentos_operacionais INT;
-    DECLARE v_equipamentos_manutencao INT;
-    DECLARE v_custo_total_manutencoes DECIMAL(10,2);
-    DECLARE v_num_manutencoes_mes INT;
-    DECLARE v_ordens_pendentes INT;
-    
-    -- Total de Equipamentos
-    SELECT COUNT(*) INTO v_total_equipamentos FROM `Equipamento`;
-    
-    -- Equipamentos Operacionais
-    SELECT COUNT(*) INTO v_equipamentos_operacionais 
-    FROM `Equipamento` 
-    WHERE `estado` = 'Operacional';
-    
-    -- Equipamentos em Manutenção
-    SELECT COUNT(*) INTO v_equipamentos_manutencao 
-    FROM `Equipamento` 
-    WHERE `estado` IN ('Manutenção Preventiva', 'Manutenção Corretiva');
-    
-    -- Custo Total de Manutenções
-    SELECT COALESCE(SUM(`custo`), 0) INTO v_custo_total_manutencoes 
-    FROM `Manutencao`;
-    
-    -- Manutenções este mês
-    SELECT COUNT(*) INTO v_num_manutencoes_mes 
-    FROM `Manutencao` 
-    WHERE MONTH(`data_inicio`) = MONTH(NOW()) 
-    AND YEAR(`data_inicio`) = YEAR(NOW());
-    
-    -- Ordens Pendentes
-    SELECT COUNT(*) INTO v_ordens_pendentes 
-    FROM `Ordem_servico` 
-    WHERE `estado_atual` IN ('Agendada', 'Em Progresso');
-    
-    -- Resultado
-    SELECT 
-        v_total_equipamentos as total_equipamentos,
-        v_equipamentos_operacionais as equipamentos_operacionais,
-        v_equipamentos_manutencao as equipamentos_em_manutencao,
-        v_custo_total_manutencoes as custo_total_manutencoes,
-        v_num_manutencoes_mes as manutencoes_este_mes,
-        v_ordens_pendentes as ordens_de_servico_pendentes;
-END$$
-DELIMITER ;
-
--- ============================================================
--- Fim das Procedures Avançadas
+-- FIM DO FICHEIRO 04_procedures.sql
 -- ============================================================
