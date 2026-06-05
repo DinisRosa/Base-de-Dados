@@ -178,3 +178,4 @@ INSERT INTO Intervencao_Tecnico (Cargo, horas_trabalho, Tecnico_id_tecnico, Manu
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+

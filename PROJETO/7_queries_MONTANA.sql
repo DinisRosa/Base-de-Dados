@@ -173,3 +173,4 @@ JOIN Departamento d ON e.Departamento_id_departamento = d.id_departamento
 ORDER BY d.designacao, e.designacao;
 
 
+

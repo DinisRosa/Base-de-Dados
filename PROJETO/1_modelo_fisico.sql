@@ -268,7 +268,7 @@ DROP TABLE IF EXISTS `mydb`.`Intervencao_Tecnico` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Intervencao_Tecnico` (
   `id_intervencao` INT NOT NULL AUTO_INCREMENT,
-  `Cargo` VARCHAR(45) NOT NULL,
+  `Cargo` VARCHAR(45) NOT NULL,s
   `horas_trabalho` INT NOT NULL,
   `Tecnico_id_tecnico` INT NOT NULL,
   `Manutencao_id_manutencao` INT NOT NULL,
@@ -292,5 +292,6 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 
 
